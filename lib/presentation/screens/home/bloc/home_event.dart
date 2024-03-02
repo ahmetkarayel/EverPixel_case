@@ -13,3 +13,7 @@ class EventHomeAdjustColor extends HomeEvent{
   final EnumTuneProperties type;
   EventHomeAdjustColor({required this.value, required this.type});
 }
+class EventHomeSetDefaultValue extends HomeEvent{
+    final EnumTuneProperties type;
+  EventHomeSetDefaultValue(this.type);
+}

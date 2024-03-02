@@ -18,7 +18,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   HomeBloc() : super(HomeInitial()) {
     on<EventHomeSelectPhoto>(_getPhoto);
     on<EventHomeAdjustColor>(_adjustColor);
-
+    on<EventHomeSetDefaultValue>(_setDefaultValue);
   }
 
   img.Image? originalImage;
@@ -52,8 +52,30 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         saturation = event.value;
         break;
   }
+/*     final processedImage = ImageHelper.processImage(clonedImage!, brightness: brightness, contrast: contrast, saturation: saturation);
+    uiImage = await ImageHelper.convertImageToFlutterUi(processedImage); */
+    await _updateImage();
+    emit(StateHomeEditedImage(uiImage));
+  }
+
+  Future<FutureOr<void>> _setDefaultValue(EventHomeSetDefaultValue event, Emitter<HomeState> emit) async {
+    switch(event.type) {
+      case EnumTuneProperties.brightness:
+        brightness = 1.0;
+        break;
+      case EnumTuneProperties.contrast:
+        contrast = 1.0;
+        break;
+      case EnumTuneProperties.saturation:
+        saturation = 1.0;
+        break;
+    }
+    await _updateImage();
+    emit(StateHomeEditedImage(uiImage,type: event.type));
+  }
+  
+  Future<void> _updateImage() async {
     final processedImage = ImageHelper.processImage(clonedImage!, brightness: brightness, contrast: contrast, saturation: saturation);
     uiImage = await ImageHelper.convertImageToFlutterUi(processedImage);
-    emit(StateHomeEditedImage(uiImage));
   }
 }

@@ -41,6 +41,20 @@ class _ScreenEditImageState extends State<ScreenEditImage> {
   void _handleBlocStates(BuildContext context, state) {
     if (state is StateHomeEditedImage) {
       setState(() {
+        if (state.type !=null) {
+          switch(state.type) {
+            case EnumTuneProperties.brightness:
+              _brightness = 1.0;
+              break;
+            case EnumTuneProperties.contrast:
+              _contrast = 1.0;
+              break;
+            case EnumTuneProperties.saturation:
+              _saturation = 1.0;
+              break;
+            case null:
+          }
+        }
         _uiImage = state.image;
       });
     }
@@ -108,12 +122,16 @@ class _ScreenEditImageState extends State<ScreenEditImage> {
             }
             ),
           const SizedBox(height: 4,),
-          const Row(
+          Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(Icons.cancel_outlined, color: Colors.red,),
-              SizedBox(width: 16,),
-              Icon(Icons.done_outline_outlined, color: Colors.green,)
+              GestureDetector(
+                onTap: (){
+                  widget.bloc.add(EventHomeSetDefaultValue(type));
+                },
+                child: const Icon(Icons.cancel_outlined, color: Colors.red,)),
+              const SizedBox(width: 16,),
+              const Icon(Icons.done_outline_outlined, color: Colors.green,)
             ], 
           ),
           const SizedBox(height: 8,),
