@@ -41,6 +41,13 @@ class _ScreenEditImageState extends State<ScreenEditImage> {
     _uiImage = widget.uiImage;
   }
 
+  void handleUndoRedoButtons(HomeEvent event) {
+    if (event is EventHomeUndo) {
+      widget.bloc.add(event);
+    } else if (event is EventHomeRedo) {
+      widget.bloc.add(event);
+    }
+  }
 
   void _handleBlocStates(BuildContext context, state) {
     if (state is StateHomeEditedImage) {
@@ -72,7 +79,10 @@ class _ScreenEditImageState extends State<ScreenEditImage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Fotoğraf Düzenleme"),centerTitle: true,),
+      appBar: AppBar(
+        title: const Text("Fotoğraf Düzenleme"),
+        centerTitle: true,
+    ),
       body: BlocListener(
         listener: _handleBlocStates,
         bloc: widget.bloc,
@@ -81,7 +91,44 @@ class _ScreenEditImageState extends State<ScreenEditImage> {
             padding: const EdgeInsets.all(8.0),
             child: Column(
               children: [
-                Center(child: RawImage(image: _uiImage, height: 300,)),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Opacity(
+                      opacity: (widget.bloc.redoStack.length>1) ? 1 : 0.2,
+                      child: GestureDetector(
+                        onTap: (widget.bloc.redoStack.isNotEmpty) ? ()=> handleUndoRedoButtons(EventHomeUndo()) : null,
+                        child: Container(
+                          padding: const EdgeInsets.all(8),
+                          decoration: const BoxDecoration(
+                            color: Colors.amber,
+                            shape: BoxShape.circle
+                          ),
+                          child: const Center(child: Icon(Icons.undo_outlined, size: 32,))    
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal:8.0),
+                      child: Center(child: RawImage(image: _uiImage, height: 300,)),
+                    ),
+                    Opacity(
+                      opacity: (widget.bloc.undoStack.isNotEmpty) ? 1 : 0.2,
+                      child: GestureDetector(
+                        onTap: (widget.bloc.undoStack.isNotEmpty) ? ()=>handleUndoRedoButtons(EventHomeRedo()) : null,
+                        child: Container(
+                          padding: const EdgeInsets.all(8),
+                          decoration: const BoxDecoration(
+                            color: Colors.amber,
+                            shape: BoxShape.circle
+                          ),
+                          child: const Center(child: Icon(Icons.redo_outlined, size: 32,))    
+                        ),
+                      ),
+                    ),
+
+                  ],
+                ),
                  const SizedBox(height: 16,),
                  _widgetSlider(type: EnumTuneProperties.contrast,defaultValue: _contrast),
                 const SizedBox(height: 16,),

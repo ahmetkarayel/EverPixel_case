@@ -24,6 +24,8 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     on<EventHomeAddFilter>(_addFilter);
     on<EventHomeApproveFilter>(_approveFilter);
     on<EventHomeRemoveFilter>(_removeFilter);
+    on<EventHomeUndo>(_handleUndo);
+    on<EventHomeRedo>(_handleRedo);
   }
 
   img.Image? originalImage;
@@ -34,12 +36,16 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   double? saturation = 1.0;
   EnumFilters selectedFilter = EnumFilters.none;
 
+  List<img.Image> undoStack = [];
+  List<img.Image> redoStack = [];
+
   Future<FutureOr<void>> _getPhoto(EventHomeSelectPhoto event, Emitter<HomeState> emit) async {
     final pickedFile = await ImagePicker().pickImage(source: event.source);
     if (pickedFile!=null) {
       var pickedImage = File(pickedFile.path);
       originalImage = img.decodeImage(pickedImage.readAsBytesSync());
       clonedImage = img.copyResize(originalImage!, width: originalImage!.width, height: originalImage!.height);
+      redoStack.add(clonedImage!);
       emit(StateHomeLoadingAlert());
       uiImage = await ImageHelper.convertImageToFlutterUi(clonedImage!);
       emit(StateHomeHasPhoto(image: uiImage));
@@ -94,6 +100,10 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         saturation = 1.0;
         break;
     }
+    redoStack.add(clonedImage!);
+    if (undoStack.isNotEmpty) {
+      undoStack.clear();
+    }
     emit(StateHomeEditedImage(uiImage, type: event.type));
   }
   Future<FutureOr<void>> _addFilter(EventHomeAddFilter event, Emitter<HomeState> emit) async {
@@ -115,6 +125,10 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
 
   Future<FutureOr<void>> _approveFilter(EventHomeApproveFilter event, Emitter<HomeState> emit) async {
     clonedImage = await ImageHelper.convertFlutterUiToImage(uiImage!);
+    redoStack.add(clonedImage!);
+    if (undoStack.isNotEmpty) {
+      undoStack.clear();
+    }
     selectedFilter = EnumFilters.none;
     emit(StateHomeEditedImage(uiImage, reset: true));
   }
@@ -123,5 +137,21 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     selectedFilter = EnumFilters.none;
     uiImage = await ImageHelper.convertImageToFlutterUi(clonedImage!);
     emit(StateHomeEditedImage(uiImage, reset: true));
+  }
+
+  Future<FutureOr<void>> _handleUndo(EventHomeUndo event, Emitter<HomeState> emit) async {
+    var x = redoStack.removeLast();
+    undoStack.add(x);
+    clonedImage = redoStack.last;
+    uiImage = await ImageHelper.convertImageToFlutterUi(clonedImage!);
+    emit(StateHomeEditedImage(uiImage));
+  }
+
+  FutureOr<void> _handleRedo(EventHomeRedo event, Emitter<HomeState> emit) async{
+    var x = undoStack.removeLast();
+    redoStack.add(x);
+    clonedImage = redoStack.last;
+    uiImage = await ImageHelper.convertImageToFlutterUi(clonedImage!);
+    emit(StateHomeEditedImage(uiImage));
   }
 }
