@@ -50,4 +50,21 @@ static Future<img.Image> convertFlutterUiToImage(ui.Image uiImage) async {
     clonedImage = img.adjustColor(clonedImage, brightness: brightness, contrast: contrast, saturation: saturation);
     return clonedImage;
   }
+
+  static img.Image addFilter(img.Image image, EnumFilters filterType) {
+    img.Image clonedImage = img.copyResize(image, width: image.width, height: image.height);
+    switch (filterType) {
+      case EnumFilters.grayscale:
+        clonedImage = img.grayscale(image);
+      case EnumFilters.pixelate:
+        clonedImage = img.pixelate(image, size: 16);
+      case EnumFilters.sepia:
+        clonedImage = img.sepia(image);
+      case EnumFilters.sketch:
+        clonedImage = img.sketch(image);
+      case EnumFilters.none:
+        
+    }
+    return clonedImage;
+  }
 }

@@ -22,3 +22,10 @@ class EventHomeApproveChanges extends HomeEvent{
   final EnumTuneProperties type;
   EventHomeApproveChanges(this.type);
 }
+
+class EventHomeAddFilter extends HomeEvent{
+  final EnumFilters type;
+  EventHomeAddFilter(this.type);
+}
+
+class EventHomeApproveFilter extends HomeEvent{}

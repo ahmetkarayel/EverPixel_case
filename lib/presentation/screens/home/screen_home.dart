@@ -28,7 +28,6 @@ class _ScreenHomeState extends State<ScreenHome> {
         Navigator.of(context).pop();
         _isDialogOpen = false;
       }
-      debugPrint("-->> State geldi");
       //_uiImage = state.image;
       Navigator.push(context, MaterialPageRoute(builder: (context) => ScreenEditImage(uiImage: state.image,bloc: _bloc,)));
     } else if(state is StateHomeLoadingAlert){

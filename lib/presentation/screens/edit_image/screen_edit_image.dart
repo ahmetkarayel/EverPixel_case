@@ -33,11 +33,14 @@ class _ScreenEditImageState extends State<ScreenEditImage> {
   double _brightness = 1.0;
   ui.Image? _uiImage;
 
+  List<EnumFilters> filters = EnumFilters.values.where((element) => element!=EnumFilters.none).toList(); 
+
   @override
   void initState() {
     super.initState();
     _uiImage = widget.uiImage;
   }
+
 
   void _handleBlocStates(BuildContext context, state) {
     if (state is StateHomeEditedImage) {
@@ -80,6 +83,54 @@ class _ScreenEditImageState extends State<ScreenEditImage> {
                 _widgetSlider(type: EnumTuneProperties.saturation,defaultValue: _saturation),
                 const SizedBox(height: 16,),
                 _widgetSlider(type: EnumTuneProperties.brightness,defaultValue: _brightness),
+                const SizedBox(height: 16,), 
+                const Text("Filtreler", style: TextStyle(fontSize: 32, fontWeight: FontWeight.w700),),
+                 SizedBox(
+                  height: 125,
+                  child: ListView.separated(
+                    scrollDirection: Axis.horizontal,
+                    itemCount: filters.length,
+                    itemBuilder: (context, index){
+                      var filter = filters[index];
+                      return GestureDetector(
+                        onTap: widget.bloc.selectedFilter == EnumFilters.none ? (){
+                          widget.bloc.add(EventHomeAddFilter(filter));
+                        } : null,
+                        child: AnimatedContainer(
+                          duration: Durations.medium2,
+                          width: 100,
+                          padding: const EdgeInsets.all(16),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(16),
+                            color: Colors.amber.withOpacity(0.4),
+                            border: Border.all(color: filter == widget.bloc.selectedFilter ? Colors.red : Colors.black, width: filter == widget.bloc.selectedFilter ? 2 : 1)
+                          ),
+                          child: Column(
+                            children: [
+                              Center(child: Text(filter.title)),
+                              const Spacer(),
+                              Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                GestureDetector(
+                                  onTap: (){},
+                                  child: const Icon(Icons.cancel_outlined, color: Colors.red,)),
+                                const SizedBox(width: 16,),
+                                GestureDetector(
+                                  onTap: (){
+                                    widget.bloc.add(EventHomeApproveFilter());
+                                  },
+                                  child: const Icon(Icons.done_outline_outlined, color: Colors.green,))
+                              ], 
+                            ),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                    separatorBuilder: (context, index)=> const SizedBox(width: 16,),
+                    ),
+                ) 
               ],
             ),
           ),
@@ -89,7 +140,6 @@ class _ScreenEditImageState extends State<ScreenEditImage> {
   }
 
   Widget _widgetSlider({required EnumTuneProperties type, required double defaultValue}){
-    debugPrint("-->> widgetSlider type: $type - value: $defaultValue");
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(16),
@@ -106,7 +156,7 @@ class _ScreenEditImageState extends State<ScreenEditImage> {
             divisions: 10,
             value: defaultValue, 
             label: defaultValue.toString(),
-            onChanged: (value){
+            onChanged: widget.bloc.selectedFilter == EnumFilters.none ? (value){
               switch(type) {
                 case EnumTuneProperties.contrast:
                   _contrast = value;
@@ -120,7 +170,8 @@ class _ScreenEditImageState extends State<ScreenEditImage> {
               }
               setState(() {});
               widget.bloc.add(EventHomeAdjustColor(type: type, value: value));
-            }
+              
+            } : null
             ),
           const SizedBox(height: 4,),
           Row(
