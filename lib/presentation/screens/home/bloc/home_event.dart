@@ -17,3 +17,8 @@ class EventHomeSetDefaultValue extends HomeEvent{
     final EnumTuneProperties type;
   EventHomeSetDefaultValue(this.type);
 }
+
+class EventHomeApproveChanges extends HomeEvent{
+  final EnumTuneProperties type;
+  EventHomeApproveChanges(this.type);
+}

@@ -1,3 +1,4 @@
+import 'package:everpixel_case/domain/models/enum_filters.dart';
 import 'package:everpixel_case/domain/models/enum_tune.dart';
 import 'package:everpixel_case/presentation/screens/home/bloc/home_bloc.dart';
 import 'package:flutter/material.dart';
@@ -74,7 +75,7 @@ class _ScreenEditImageState extends State<ScreenEditImage> {
               children: [
                 Center(child: RawImage(image: _uiImage, height: 300,)),
                 const SizedBox(height: 16,),
-                _widgetSlider(type: EnumTuneProperties.contrast,defaultValue: _contrast),
+                 _widgetSlider(type: EnumTuneProperties.contrast,defaultValue: _contrast),
                 const SizedBox(height: 16,),
                 _widgetSlider(type: EnumTuneProperties.saturation,defaultValue: _saturation),
                 const SizedBox(height: 16,),
@@ -131,7 +132,11 @@ class _ScreenEditImageState extends State<ScreenEditImage> {
                 },
                 child: const Icon(Icons.cancel_outlined, color: Colors.red,)),
               const SizedBox(width: 16,),
-              const Icon(Icons.done_outline_outlined, color: Colors.green,)
+              GestureDetector(
+                onTap: (){
+                  widget.bloc.add(EventHomeApproveChanges(type));
+                },
+                child: const Icon(Icons.done_outline_outlined, color: Colors.green,))
             ], 
           ),
           const SizedBox(height: 8,),

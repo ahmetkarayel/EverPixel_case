@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 import 'dart:ui' as ui;
+import 'package:everpixel_case/domain/models/enum_filters.dart';
 import 'package:everpixel_case/domain/models/enum_tune.dart';
 import 'package:flutter/material.dart';
 import 'package:image/image.dart' as img;
@@ -19,6 +20,8 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     on<EventHomeSelectPhoto>(_getPhoto);
     on<EventHomeAdjustColor>(_adjustColor);
     on<EventHomeSetDefaultValue>(_setDefaultValue);
+    on<EventHomeApproveChanges>(_approveChanges);
+
   }
 
   img.Image? originalImage;
@@ -73,8 +76,23 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     await _updateImage();
     emit(StateHomeEditedImage(uiImage,type: event.type));
   }
-  
-  Future<void> _updateImage() async {
+
+  Future<FutureOr<void>> _approveChanges(EventHomeApproveChanges event, Emitter<HomeState> emit) async {
+    clonedImage = await ImageHelper.convertFlutterUiToImage(uiImage!);
+    switch(event.type) {
+      case EnumTuneProperties.brightness:
+        brightness = 1.0;
+        break;
+      case EnumTuneProperties.contrast:
+        contrast = 1.0;
+        break;
+      case EnumTuneProperties.saturation:
+        saturation = 1.0;
+        break;
+    }
+    emit(StateHomeEditedImage(uiImage, type: event.type));
+  }
+ Future<void> _updateImage() async {
     final processedImage = ImageHelper.processImage(clonedImage!, brightness: brightness, contrast: contrast, saturation: saturation);
     uiImage = await ImageHelper.convertImageToFlutterUi(processedImage);
   }

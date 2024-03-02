@@ -1,5 +1,7 @@
 import 'dart:ui' as ui;
+import 'package:everpixel_case/domain/models/enum_filters.dart';
 import 'package:image/image.dart' as img;
+import 'package:image/image.dart';
 
 class ImageHelper{
   static Future<ui.Image> convertImageToFlutterUi(img.Image image) async {
@@ -34,6 +36,15 @@ class ImageHelper{
     return uiImage;
   }
 
+static Future<img.Image> convertFlutterUiToImage(ui.Image uiImage) async {
+  final uiBytes = await uiImage.toByteData();
+
+  final image = img.Image.fromBytes(width: uiImage.width, height: uiImage.height,
+      bytes: uiBytes!.buffer,
+      numChannels: 4);
+
+  return image;
+}
   static img.Image processImage(img.Image image, {double? brightness, double? contrast, double? saturation}) {
     img.Image clonedImage = img.copyResize(image, width: image.width, height: image.height);
     clonedImage = img.adjustColor(clonedImage, brightness: brightness, contrast: contrast, saturation: saturation);
