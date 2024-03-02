@@ -8,7 +8,12 @@ class HomeInitial extends HomeState {}
 class StateHomeLoadingAlert extends HomeState{}
 
 class StateHomeHasPhoto extends HomeState{
-  final ui.Image image;
+  final ui.Image? image;
   StateHomeHasPhoto({required this.image});
+}
+
+class StateHomeEditedImage extends HomeState{
+  final ui.Image? image;
+  StateHomeEditedImage(this.image);
 }
 

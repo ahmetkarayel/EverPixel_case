@@ -7,3 +7,9 @@ class EventHomeSelectPhoto extends HomeEvent{
   final ImageSource source;
   EventHomeSelectPhoto({required this.source});
 }
+
+class EventHomeAdjustColor extends HomeEvent{
+  final double value;
+  final EnumTuneProperties type;
+  EventHomeAdjustColor({required this.value, required this.type});
+}

@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 import 'dart:ui' as ui;
+import 'package:everpixel_case/domain/models/enum_tune.dart';
 import 'package:flutter/material.dart';
 import 'package:image/image.dart' as img;
 
@@ -16,13 +17,18 @@ part 'home_state.dart';
 class HomeBloc extends Bloc<HomeEvent, HomeState> {
   HomeBloc() : super(HomeInitial()) {
     on<EventHomeSelectPhoto>(_getPhoto);
+    on<EventHomeAdjustColor>(_adjustColor);
+
   }
 
   img.Image? originalImage;
   img.Image? clonedImage;
+  ui.Image? uiImage;
+  double? brightness = 1.0;
+  double? contrast = 1.0;
+  double? saturation = 1.0;
 
   Future<FutureOr<void>> _getPhoto(EventHomeSelectPhoto event, Emitter<HomeState> emit) async {
-    var uiImage;
     final pickedFile = await ImagePicker().pickImage(source: event.source);
     if (pickedFile!=null) {
       var pickedImage = File(pickedFile.path);
@@ -32,5 +38,22 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       uiImage = await ImageHelper.convertImageToFlutterUi(clonedImage!);
       emit(StateHomeHasPhoto(image: uiImage));
     }
+  }
+
+  Future<FutureOr<void>> _adjustColor(EventHomeAdjustColor event, Emitter<HomeState> emit) async {
+    switch(event.type) {
+      case EnumTuneProperties.brightness:
+        brightness = event.value;
+        break;
+      case EnumTuneProperties.contrast:
+        contrast = event.value;
+        break;
+      case EnumTuneProperties.saturation:
+        saturation = event.value;
+        break;
+  }
+    final processedImage = ImageHelper.processImage(clonedImage!, brightness: brightness, contrast: contrast, saturation: saturation);
+    uiImage = await ImageHelper.convertImageToFlutterUi(processedImage);
+    emit(StateHomeEditedImage(uiImage));
   }
 }

@@ -33,4 +33,10 @@ class ImageHelper{
 
     return uiImage;
   }
+
+  static img.Image processImage(img.Image image, {double? brightness, double? contrast, double? saturation}) {
+    img.Image clonedImage = img.copyResize(image, width: image.width, height: image.height);
+    clonedImage = img.adjustColor(clonedImage, brightness: brightness, contrast: contrast, saturation: saturation);
+    return clonedImage;
+  }
 }
