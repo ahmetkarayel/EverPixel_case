@@ -36,15 +36,16 @@ class ImageHelper{
     return uiImage;
   }
 
-static Future<img.Image> convertFlutterUiToImage(ui.Image uiImage) async {
-  final uiBytes = await uiImage.toByteData();
+  static Future<img.Image> convertFlutterUiToImage(ui.Image uiImage) async {
+    final uiBytes = await uiImage.toByteData();
 
-  final image = img.Image.fromBytes(width: uiImage.width, height: uiImage.height,
-      bytes: uiBytes!.buffer,
-      numChannels: 4);
+    final image = img.Image.fromBytes(width: uiImage.width, height: uiImage.height,
+        bytes: uiBytes!.buffer,
+        numChannels: 4);
 
-  return image;
-}
+    return image;
+  } 
+
   static img.Image processImage(img.Image image, {double? brightness, double? contrast, double? saturation}) {
     img.Image clonedImage = img.copyResize(image, width: image.width, height: image.height);
     clonedImage = img.adjustColor(clonedImage, brightness: brightness, contrast: contrast, saturation: saturation);
@@ -55,13 +56,13 @@ static Future<img.Image> convertFlutterUiToImage(ui.Image uiImage) async {
     img.Image clonedImage = img.copyResize(image, width: image.width, height: image.height);
     switch (filterType) {
       case EnumFilters.grayscale:
-        clonedImage = img.grayscale(image);
+        clonedImage = img.grayscale(clonedImage);
       case EnumFilters.pixelate:
-        clonedImage = img.pixelate(image, size: 16);
+        clonedImage = img.pixelate(clonedImage, size: 16);
       case EnumFilters.sepia:
-        clonedImage = img.sepia(image);
+        clonedImage = img.sepia(clonedImage);
       case EnumFilters.sketch:
-        clonedImage = img.sketch(image);
+        clonedImage = img.sketch(clonedImage);
       case EnumFilters.none:
         
     }

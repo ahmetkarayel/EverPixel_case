@@ -29,3 +29,5 @@ class EventHomeAddFilter extends HomeEvent{
 }
 
 class EventHomeApproveFilter extends HomeEvent{}
+
+class EventHomeRemoveFilter extends HomeEvent{}

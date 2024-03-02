@@ -15,6 +15,7 @@ class StateHomeHasPhoto extends HomeState{
 class StateHomeEditedImage extends HomeState{
   final ui.Image? image;
   final EnumTuneProperties? type;
-  StateHomeEditedImage(this.image, {this.type});
+  final bool reset;
+  StateHomeEditedImage(this.image, {this.reset=false, this.type});
 }
 

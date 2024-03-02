@@ -23,6 +23,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     on<EventHomeApproveChanges>(_approveChanges);
     on<EventHomeAddFilter>(_addFilter);
     on<EventHomeApproveFilter>(_approveFilter);
+    on<EventHomeRemoveFilter>(_removeFilter);
   }
 
   img.Image? originalImage;
@@ -97,15 +98,13 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   }
   Future<FutureOr<void>> _addFilter(EventHomeAddFilter event, Emitter<HomeState> emit) async {
     selectedFilter = event.type;
-    add(EventHomeSetDefaultValue(EnumTuneProperties.brightness));
-    add(EventHomeSetDefaultValue(EnumTuneProperties.saturation));
-    add(EventHomeSetDefaultValue(EnumTuneProperties.contrast));
     await _updateFilteredImage(event.type); 
     emit(StateHomeEditedImage(uiImage));
   }
 
   Future<void> _updateFilteredImage(EnumFilters filterType) async {
-    final processedImage = ImageHelper.addFilter(clonedImage!, filterType);
+    var lastUi = await ImageHelper.convertFlutterUiToImage(uiImage!);
+    final processedImage = ImageHelper.addFilter(lastUi, filterType);
     uiImage = await ImageHelper.convertImageToFlutterUi(processedImage);
   }
 
@@ -116,10 +115,13 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
 
   Future<FutureOr<void>> _approveFilter(EventHomeApproveFilter event, Emitter<HomeState> emit) async {
     clonedImage = await ImageHelper.convertFlutterUiToImage(uiImage!);
-
     selectedFilter = EnumFilters.none;
-    emit(StateHomeEditedImage(uiImage));
-
+    emit(StateHomeEditedImage(uiImage, reset: true));
   }
 
+  Future<FutureOr<void>> _removeFilter(EventHomeRemoveFilter event, Emitter<HomeState> emit) async {
+    selectedFilter = EnumFilters.none;
+    uiImage = await ImageHelper.convertImageToFlutterUi(clonedImage!);
+    emit(StateHomeEditedImage(uiImage, reset: true));
+  }
 }

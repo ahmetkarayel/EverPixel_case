@@ -59,6 +59,11 @@ class _ScreenEditImageState extends State<ScreenEditImage> {
             case null:
           }
         }
+        if (state.reset) {
+          _brightness = 1.0;
+          _contrast = 1.0;
+          _saturation = 1.0;
+        }
         _uiImage = state.image;
       });
     }
@@ -77,13 +82,13 @@ class _ScreenEditImageState extends State<ScreenEditImage> {
             child: Column(
               children: [
                 Center(child: RawImage(image: _uiImage, height: 300,)),
-                const SizedBox(height: 16,),
+                 const SizedBox(height: 16,),
                  _widgetSlider(type: EnumTuneProperties.contrast,defaultValue: _contrast),
                 const SizedBox(height: 16,),
                 _widgetSlider(type: EnumTuneProperties.saturation,defaultValue: _saturation),
                 const SizedBox(height: 16,),
                 _widgetSlider(type: EnumTuneProperties.brightness,defaultValue: _brightness),
-                const SizedBox(height: 16,), 
+                const SizedBox(height: 16,),  
                 const Text("Filtreler", style: TextStyle(fontSize: 32, fontWeight: FontWeight.w700),),
                  SizedBox(
                   height: 125,
@@ -113,7 +118,9 @@ class _ScreenEditImageState extends State<ScreenEditImage> {
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 GestureDetector(
-                                  onTap: (){},
+                                  onTap: (){
+                                    widget.bloc.add(EventHomeRemoveFilter());
+                                  },
                                   child: const Icon(Icons.cancel_outlined, color: Colors.red,)),
                                 const SizedBox(width: 16,),
                                 GestureDetector(
@@ -171,7 +178,23 @@ class _ScreenEditImageState extends State<ScreenEditImage> {
               setState(() {});
               widget.bloc.add(EventHomeAdjustColor(type: type, value: value));
               
-            } : null
+            } : null  
+/*             onChanged: (value){
+              switch(type) {
+                case EnumTuneProperties.contrast:
+                  _contrast = value;
+                  break;
+                case EnumTuneProperties.saturation:
+                  _saturation = value;
+                  break;
+                case EnumTuneProperties.brightness:
+                  _brightness = value;
+                  break;
+              }
+              setState(() {});
+              widget.bloc.add(EventHomeAdjustColor(type: type, value: value));
+              
+            }, */
             ),
           const SizedBox(height: 4,),
           Row(
