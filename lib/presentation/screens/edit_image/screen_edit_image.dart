@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'dart:ui' as ui;
 import 'package:image/image.dart' as img;
+import 'package:share_plus/share_plus.dart';
 
 class ScreenEditImage extends StatefulWidget {
   final ui.Image? uiImage;
@@ -76,12 +77,34 @@ class _ScreenEditImageState extends State<ScreenEditImage> {
     }
   }
 
+
+  _shareButton() {
+     var uint8List = img.encodePng(widget.bloc.clonedImage!);
+        Share.shareXFiles(
+          [
+            XFile.fromData(
+              uint8List,
+              name: 'Image Gallery',
+              mimeType: 'image/png',
+            ),
+          ],
+          subject: 'Image Gallery',
+        );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Fotoğraf Düzenleme"),
         centerTitle: true,
+        actions: [
+          IconButton(
+            onPressed: (){
+              _shareButton();
+            }, 
+            icon: const Icon(Icons.share_rounded))
+        ],
     ),
       body: BlocListener(
         listener: _handleBlocStates,
