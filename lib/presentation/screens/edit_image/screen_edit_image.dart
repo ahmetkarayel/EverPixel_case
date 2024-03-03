@@ -116,6 +116,7 @@ class _ScreenEditImageState extends State<ScreenEditImage> {
               children: [
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.min,
                   children: [
                     Opacity(
                       opacity: (widget.bloc.redoStack.length>1) ? 1 : 0.2,
@@ -131,11 +132,13 @@ class _ScreenEditImageState extends State<ScreenEditImage> {
                         ),
                       ),
                     ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal:8.0),
-                      child: Center(child: RawImage(image: _uiImage, height: 300,)),
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal:8.0),
+                        child: Center(child: RawImage(image: _uiImage,height: 300,)),
+                      ),
                     ),
-                    Opacity(
+                     Opacity(
                       opacity: (widget.bloc.undoStack.isNotEmpty) ? 1 : 0.2,
                       child: GestureDetector(
                         onTap: (widget.bloc.undoStack.isNotEmpty) ? ()=>handleUndoRedoButtons(EventHomeRedo()) : null,
@@ -148,7 +151,7 @@ class _ScreenEditImageState extends State<ScreenEditImage> {
                           child: const Center(child: Icon(Icons.redo_outlined, size: 32,))    
                         ),
                       ),
-                    ),
+                    ), 
 
                   ],
                 ),
@@ -249,22 +252,6 @@ class _ScreenEditImageState extends State<ScreenEditImage> {
               widget.bloc.add(EventHomeAdjustColor(type: type, value: value));
               
             } : null  
-/*             onChanged: (value){
-              switch(type) {
-                case EnumTuneProperties.contrast:
-                  _contrast = value;
-                  break;
-                case EnumTuneProperties.saturation:
-                  _saturation = value;
-                  break;
-                case EnumTuneProperties.brightness:
-                  _brightness = value;
-                  break;
-              }
-              setState(() {});
-              widget.bloc.add(EventHomeAdjustColor(type: type, value: value));
-              
-            }, */
             ),
           const SizedBox(height: 4,),
           Row(
